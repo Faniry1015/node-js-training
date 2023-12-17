@@ -4,12 +4,17 @@ import {readdir, stat} from 'node:fs/promises'
 
 const currentDir = await readdir('./', {withFileTypes:true})
 for (const item of currentDir) {
-    if (item.isDirectory()) {
-        console.log('D', item.name)
-    } else {
-        const currentItem = await stat(item.name)
-        console.log('F', item.name, currentItem.size)
+    // const {size} = await stat(item.name)
+    // console.log(item.isDirectory() ? `D - ${item.name}`  : `F - ${item.name} - ${size}`)
+    const parts = [
+        item.isDirectory() ? 'D' : 'F',
+        item.name,
+    ]
+    if(!item.isDirectory()) {
+        const {size} = await stat(item.name)
+        parts.push(`${size}o`)
     }
+    console.log(parts.join(' - '))
 }
 
 
