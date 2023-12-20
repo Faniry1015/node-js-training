@@ -2,6 +2,7 @@
 import { createServer } from 'node:http'
 
 const server = createServer((req, res) => {
+    console.log(req.method) //Obtenir la méthod (GET, POST,...)
     const url = new URL(req.url, `http://${req.headers.host}`) //Crée un objet url (chemin (sans nom de domaine), nom de domaine)
     console.log(url) // Objet avec plusieurs propriétés
     console.log(req.url) //donne le chemin (SANS LE NOM DE DOMAINE)
