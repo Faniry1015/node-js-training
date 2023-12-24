@@ -10,7 +10,8 @@ export async function add(req, res) {
 }
 
 export async function remove(req, res, url) {
-    removeTodo(parseInt(url.searchParams.get('id'), 10))
+    await removeTodo(parseInt(url.searchParams.get('id'), 10))
+    res.writeHead(204)
 }
 
 export async function update(req, res, url) {

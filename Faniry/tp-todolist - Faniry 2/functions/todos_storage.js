@@ -1,4 +1,5 @@
 import { readFile, writeFile } from 'node:fs/promises'
+import { NotFoundError } from './errors.js'
 
 const dataPath = './storage/todos.json'
 
@@ -14,14 +15,20 @@ export async function addTodo({title, completed = false}) {
 }
 
 export async function removeTodo(id) {
-    let todos = await findTodos()
-    todos = todos.filter(todo => todo.id !== id)
-    writeFile(dataPath, JSON.stringify(todos, null, 2))
+    const todos = await findTodos()
+    const todoIndex = todos.findIndex(todo => todo.id === id)
+    if (todoIndex === -1) {
+        throw new NotFoundError()
+    }
+    writeFile(dataPath, JSON.stringify(todos.filter(todo => todo.id !== id), null, 2))
 }
 
 export async function updateTodo(id, partialTodo) { 
     const todos = await findTodos()
     const todo = todos.find(todo => todo.id === id)
+    if (todo === undefined) {
+        throw new NotFoundError()
+    }
     Object.assign(todo, partialTodo)
     writeFile(dataPath, JSON.stringify(todos, null, 2))
     return todo

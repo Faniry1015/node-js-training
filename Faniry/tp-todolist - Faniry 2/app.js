@@ -1,30 +1,41 @@
-import { readFile } from 'node:fs/promises'
 import { createServer } from 'node:http'
 import { add, index, remove, update } from './functions/api/todos.js'
+import { NotFoundError } from './functions/errors.js'
 
-const server = createServer( async (req, res) => {
-    res.writeHead(200, {
-        'Content-Type' : 'application/json',
-        'Accept' : 'application/json'
-    })
-    const url = new URL(req.url, `http://${req.headers.host}`)
-    const method = req.method
-    const endpoint = `${method}:${url.pathname}`
-    switch (endpoint) {
-        case 'GET:/todos':
-            res.write(JSON.stringify(await index(req, res)))
-            break;
-        case 'POST:/todos':
-            res.write(JSON.stringify(await add(req, res)))
-            break;
-        case 'DELETE:/todos':
-            remove(req,res, url)
-            break;
-        case 'PUT:/todos':
-            res.write(JSON.stringify(await update(req,res, url)))
-            break
-        default:
-            throw new Error('requête inconnu')
+const server = createServer(async (req, res) => {
+    try {
+        res.setHeader('Content-Type', 'application/json')
+        const url = new URL(req.url, `http://${req.headers.host}`)
+        const method = req.method
+        const endpoint = `${method}:${url.pathname}`
+        let results
+        switch (endpoint) {
+            case 'GET:/todos':
+                results = await index(req, res)
+                break;
+            case 'POST:/todos':
+                results = await add(req, res)
+                break;
+            case 'DELETE:/todos':
+                results = await remove(req, res, url)
+                break;
+            case 'PUT:/todos':
+                results = await update(req, res, url)
+                break
+            default:
+                res.writeHead(404)
+                break;
+        }
+        if (results) {
+            res.write(JSON.stringify(results))
+        }
+
+    } catch (e) {
+        if (e instanceof NotFoundError) {
+            res.writeHead(404)
+        } else {
+            throw e
+        }
     }
     res.end()
 })
