@@ -1,0 +1,15 @@
+{
+  "name": "chemins_de_fichier",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "dev" : "node watcher.js app.js",
+    "start" : "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type" : "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
