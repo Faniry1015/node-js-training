@@ -1,4 +1,4 @@
-import { findTodos, addTodos } from "../todos_storage.js"
+import { findTodos, addTodo, removeTodo, updateTodo } from "../todos_storage.js"
 import { json } from "node:stream/consumers"
 
 export async function index(req, res) {
@@ -6,5 +6,13 @@ export async function index(req, res) {
 }
 
 export async function add(req, res) {
-    return addTodos(await json(req))
+    return addTodo(await json(req))
+}
+
+export async function remove(req, res, url) {
+    removeTodo(parseInt(url.searchParams.get('id'), 10))
+}
+
+export async function update(req, res, url) {
+    return updateTodo(parseInt(url.searchParams.get('id'), 10), await json(req))
 }
